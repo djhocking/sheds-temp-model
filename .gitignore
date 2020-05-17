@@ -12,3 +12,6 @@ r/docs/_book
 r/docs/*.log
 
 r/csv/*.csv
+
+1.1-dev
+1.1-dev/*
