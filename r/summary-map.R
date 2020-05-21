@@ -2,12 +2,17 @@ if(!require(viridis)) {
   install.packages("viridis", repos="http://cloud.r-project.org")
   library(viridis)
 }
+if(!require(rasterVis)) {
+  remotes::install_github('oscarperpinan/rasterVis')
+  library(rasterVis)
+}
 
 library(sf)
 library(ggplot2)
 # library(broom)
 library(dplyr)
 library(ggsn)
+library(fasterize)
 
 # theme_set(theme_bw())
 
@@ -35,7 +40,7 @@ theme_map <- function(...) {
 
 nowt <- function(x = NULL) x
 
-# catchments_02 <- st_read("1.1-dev/data_stream_spatial/spatial_02/Catchments02.shp", stringsAsFactors = FALSE)
+catchments_01 <- st_read("1.1-dev/data_stream_spatial/spatial_01/Catchments01.shp", stringsAsFactors = FALSE)
 
 # flowlines
 flow_01 <- st_read("1.1-dev/data_stream_spatial/spatial_01/truncatedFlowlines01.shp", stringsAsFactors = FALSE)
@@ -96,6 +101,33 @@ flow_06 <- flow_06 %>%
   rename(featureid = FEATUREID) %>%
   left_join(df_derived) %>%
   nowt()
+
+##### Rasterize for speed of plotting #####
+
+# doesn't like line features, must be polygons - switch to catchments
+# r <- raster(flow_01, res = 1)
+# flow_01_rast <- fasterize::fasterize(flow_01, raster = r, field = "max_temp_30d")
+
+catch_01 <- st_transform(catchments_01, "+proj=longlat +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs") %>%
+  dplyr::rename(featureid = FEATUREID) %>%
+  left_join(df_derived) %>%
+  # st_cast(to = "POLYGON") %>%
+  nowt()
+
+r <- raster::raster(catch_01, res = 0.001)
+catch_01_rast <- fasterize::fasterize(catch_01, raster = r, field = "max_temp_30d")
+
+plot(catch_01_rast)
+
+library(rasterVis)
+
+map_catch <- ggplot(data = catch_01_rast) + 
+  geom_raster(aes(color = max_temp_30d)) +
+  # geom_sf(data = flow_02, aes(color = max_temp_30d))
+  nowt()
+
+#####
+
 
 # 
 # catchments_02 <- catchments_02 %>%
