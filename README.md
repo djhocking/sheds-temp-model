@@ -7,7 +7,7 @@ Jeffrey D. Walker, PhD
 Ben Letcher, PhD  
 [USGS](https://www.lsc.usgs.gov/?q=cafb-research), [UMass](https://eco.umass.edu/people/faculty/letcher-ben/)
 
-Dan Hocking, PhD  
+Daniel Hocking, PhD  
 [Frostburg State University](http://hockinglab.weebly.com/)
 
 *Adapted from*: [Northeast Temperature Model](https://github.com/Conte-Ecology/conteStreamTemperature_northeast)
